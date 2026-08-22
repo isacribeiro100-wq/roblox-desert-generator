@@ -1,5 +1,5 @@
 --[[
-    GERADOR DE DESERTO PROCEDURAL - APENAS AREIA
+    GERADOR DE DESERTO PROCEDURAL INFINITO - APENAS AREIA
     Gera terreno procedural com apenas areia e dunes naturais
 ]]
 
@@ -179,27 +179,26 @@ function DesertGenerator:loadChunksAroundPlayer(playerPosition, partSize)
     end
 end
 
--- Gera deserto infinito (começa)
-function DesertGenerator:start()
-    local player = game.Players:GetPlayers()[1]
-    
-    if not player or not player.Character then
-        print("Aguardando player...")
-        task.wait(1)
-        self:start()
-        return
+-- ============ EXECUTAR AQUI ============
+
+local player = game.Players:GetPlayers()[1]
+
+if player and player.Character then
+    -- Teleportar player para um lugar seguro acima da areia
+    task.wait(1)
+    if player.Character:FindFirstChild("HumanoidRootPart") then
+        player.Character.HumanoidRootPart.Position = Vector3.new(0, 100, 0)
+        print("✓ Player teleportado para o topo do deserto!")
     end
     
-    print("Iniciando geração de deserto procedural infinito...")
+    print("✓ Iniciando deserto procedural infinito...")
     
     -- Loop de atualização
     while true do
         if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
             local playerPos = player.Character.HumanoidRootPart.Position
-            self:loadChunksAroundPlayer(playerPos, 5)
+            DesertGenerator:loadChunksAroundPlayer(playerPos, 5)
         end
-        task.wait(1)
+        task.wait(0.5)
     end
 end
-
-return DesertGenerator
