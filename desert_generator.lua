@@ -1,6 +1,6 @@
 --[[
-    GERADOR DE DESERTO PROCEDURAL INFINITO - APENAS AREIA
-    Gera terreno procedural com apenas areia e dunes naturais
+    GERADOR DE DESERTO PROCEDURAL INFINITO - SPAWN NO TOPO DA AREIA
+    Gera terreno procedural centrado no spawn e coloca player no topo
 ]]
 
 local DesertGenerator = {}
@@ -11,7 +11,7 @@ DesertGenerator.octaves = 4
 DesertGenerator.persistence = 0.5
 DesertGenerator.lacunarity = 2.0
 DesertGenerator.chunkSize = 50  -- Tamanho de cada chunk
-DesertGenerator.renderDistance = 200  -- Distância de renderização
+DesertGenerator.renderDistance = 300  -- Distância de renderização
 
 -- Função de ruído Perlin simplificada
 local function hash(x, y)
@@ -184,16 +184,38 @@ end
 local player = game.Players:GetPlayers()[1]
 
 if player and player.Character then
-    -- Teleportar player para um lugar seguro acima da areia
-    task.wait(1)
-    if player.Character:FindFirstChild("HumanoidRootPart") then
-        player.Character.HumanoidRootPart.Position = Vector3.new(0, 100, 0)
-        print("✓ Player teleportado para o topo do deserto!")
+    print("✓ Iniciando deserto procedural dinâmico...")
+    
+    -- Encontrar SpawnLocation
+    local spawnLocation = workspace:FindFirstChild("SpawnLocation") or workspace:FindFirstChild("Spawn")
+    local spawnPosX = 0
+    local spawnPosZ = 0
+    
+    if spawnLocation then
+        spawnPosX = spawnLocation.Position.X
+        spawnPosZ = spawnLocation.Position.Z
+        print("✓ Spawn encontrado em: X=" .. spawnPosX .. ", Z=" .. spawnPosZ)
     end
     
-    print("✓ Iniciando deserto procedural infinito...")
+    -- Gerar areia inicial ao redor do spawn
+    task.wait(0.5)
+    DesertGenerator:loadChunksAroundPlayer(Vector3.new(spawnPosX, 0, spawnPosZ), 5)
+    print("✓ Areia gerada ao redor do spawn!")
     
-    -- Loop de atualização
+    -- Calcular altura da areia no spawn
+    task.wait(1)
+    local heightAtSpawn = DesertGenerator:getHeight(spawnPosX, spawnPosZ)
+    local topOfSand = heightAtSpawn + 15  -- +15 para ficar bem no topo
+    
+    -- Teleportar player para o topo da areia no spawn
+    if player.Character:FindFirstChild("HumanoidRootPart") then
+        player.Character.HumanoidRootPart.Position = Vector3.new(spawnPosX, topOfSand, spawnPosZ)
+        print("✓ Player spawnou no TOPO DA AREIA! Altura: " .. topOfSand)
+    end
+    
+    print("✓ Deserto pronto! Movimente-se para gerar mais...")
+    
+    -- Loop de atualização - carrega/descarrega chunks conforme o player se move
     while true do
         if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
             local playerPos = player.Character.HumanoidRootPart.Position
