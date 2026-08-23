@@ -186,8 +186,8 @@ local player = game.Players:GetPlayers()[1]
 if player and player.Character then
     print("✓ Iniciando deserto procedural dinâmico...")
     
-    -- Encontrar SpawnLocation
-    local spawnLocation = workspace:FindFirstChild("SpawnLocation") or workspace:FindFirstChild("Spawn")
+    -- Encontrar Spawnlocation (com o nome correto)
+    local spawnLocation = workspace:FindFirstChild("Spawnlocation")
     local spawnPosX = 0
     local spawnPosZ = 0
     
@@ -195,6 +195,8 @@ if player and player.Character then
         spawnPosX = spawnLocation.Position.X
         spawnPosZ = spawnLocation.Position.Z
         print("✓ Spawn encontrado em: X=" .. spawnPosX .. ", Z=" .. spawnPosZ)
+    else
+        print("⚠️ Spawn não encontrado! Usando posição padrão (0, 0)")
     end
     
     -- Gerar areia inicial ao redor do spawn
