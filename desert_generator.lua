@@ -184,10 +184,14 @@ if player and player.Character then
         print("⚠️ Spawn não encontrado! Usando posição padrão (0, 0)")
     end
     
-    -- Gerar areia PRIMEIRO
+    -- Gerar areia PRIMEIRO - grade 5x5 centrada no spawn
     print("✓ Gerando areia...")
     task.wait(0.5)
-    DesertGenerator:loadChunksAroundPlayer(Vector3.new(spawnPosX, 50, spawnPosZ), 5)
+    for i = -2, 2 do
+        for j = -2, 2 do
+            DesertGenerator:createChunk(i, j, 5)
+        end
+    end
     print("✓ Areia gerada ao redor do spawn!")
     
     task.wait(2)  -- Aguarda mais tempo para a areia gerar
